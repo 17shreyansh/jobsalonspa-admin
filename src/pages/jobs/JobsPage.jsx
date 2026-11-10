@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions,
-    TextField, MenuItem, Switch, IconButton, Tooltip,
+    TextField, MenuItem, Switch, IconButton, Tooltip, Chip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +13,11 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import { getJobs, createJob, updateJob, toggleJobStatus, deleteJob, getActiveCategories } from '../../api/services';
 
 const EMPTY = { title: '', description: '', type: 'standard', categoryId: '' };
+
+const TYPE_CHIP = {
+    standard: { label: 'Salon', sx: { bgcolor: '#fef3c7', color: '#d97706' } },
+    spa: { label: 'Spa', sx: { bgcolor: '#ede9fe', color: '#7c3aed' } },
+};
 
 export default function JobsPage() {
     const qc = useQueryClient();
@@ -35,7 +40,7 @@ export default function JobsPage() {
 
     const saveMutation = useMutation({
         mutationFn: (d) => dialog?.data?._id ? updateJob(dialog.data._id, d) : createJob(d),
-        onSuccess: () => { toast.success('Saved'); setDialog(null); invalidate(); },
+        onSuccess: () => { toast.success('Job saved'); setDialog(null); invalidate(); },
         onError: (e) => toast.error(e.response?.data?.message || 'Error'),
     });
 
@@ -46,33 +51,58 @@ export default function JobsPage() {
 
     const deleteMutation = useMutation({
         mutationFn: deleteJob,
-        onSuccess: () => { toast.success('Deleted'); setDeleteTarget(null); invalidate(); },
+        onSuccess: () => { toast.success('Job deleted'); setDeleteTarget(null); invalidate(); },
     });
 
     const openCreate = () => { setForm(EMPTY); setDialog({ mode: 'create' }); };
     const openEdit = (row) => {
-        setForm({ title: row.title, description: row.description, type: row.type, categoryId: row.category._id });
+        setForm({ title: row.title, description: row.description, type: row.type, categoryId: row.category?._id || '' });
         setDialog({ mode: 'edit', data: row });
     };
 
     const columns = [
-        { key: 'title', label: 'Title' },
-        { key: 'type', label: 'Type' },
-        { key: 'category', label: 'Category', render: (row) => row.category?.name },
         {
-            key: 'status', label: 'Status',
-            render: (row) => <Switch checked={row.status} size="small" onChange={() => toggleMutation.mutate(row._id)} />,
+            key: 'title', label: 'Title',
+            render: (row) => <Typography sx={{ fontSize: 13.5, fontWeight: 500 }}>{row.title}</Typography>,
+        },
+        {
+            key: 'type', label: 'Type',
+            render: (row) => {
+                const cfg = TYPE_CHIP[row.type] || TYPE_CHIP.standard;
+                return <Chip label={cfg.label} size="small" sx={cfg.sx} />;
+            },
+        },
+        { key: 'category', label: 'Category', render: (row) => row.category?.name || '—' },
+        {
+            key: 'status', label: 'Active',
+            render: (row) => (
+                <Switch
+                    checked={row.status}
+                    size="small"
+                    onChange={() => toggleMutation.mutate(row._id)}
+                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#16a34a' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#16a34a' } }}
+                />
+            ),
         },
         {
             key: 'createdAt', label: 'Created',
-            render: (row) => new Date(row.createdAt).toLocaleDateString(),
+            render: (row) => new Date(row.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
         },
         {
             key: 'actions', label: '',
             render: (row) => (
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <Tooltip title="Edit"><IconButton size="small" onClick={() => openEdit(row)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Delete"><IconButton size="small" color="error" onClick={() => setDeleteTarget(row)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip title="Edit">
+                        <IconButton size="small" onClick={() => openEdit(row)}>
+                            <EditIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <IconButton size="small" onClick={() => setDeleteTarget(row)}
+                            sx={{ color: '#9ca3af', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
+                            <DeleteIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             ),
         },
@@ -80,42 +110,80 @@ export default function JobsPage() {
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h5" fontWeight={700}>Jobs</Typography>
-                <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>Add Job</Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                <Box>
+                    <Typography variant="h5">Jobs</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {total} total job listings
+                    </Typography>
+                </Box>
+                <Button variant="contained" startIcon={<AddIcon sx={{ fontSize: 16 }} />} onClick={openCreate}>
+                    Add Job
+                </Button>
             </Box>
 
-            <DataTable columns={columns} rows={rows} total={total} page={page}
-                rowsPerPage={10} onPageChange={(_, p) => setPage(p)} loading={isLoading} />
+            <DataTable
+                columns={columns} rows={rows} total={total} page={page}
+                rowsPerPage={10} onPageChange={(_, p) => setPage(p)} loading={isLoading}
+            />
 
             <Dialog open={!!dialog} onClose={() => setDialog(null)} maxWidth="sm" fullWidth>
                 <DialogTitle>{dialog?.mode === 'edit' ? 'Edit Job' : 'New Job'}</DialogTitle>
-                <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-                    <TextField label="Title" fullWidth required value={form.title}
-                        onChange={(e) => setForm({ ...form, title: e.target.value })} />
-                    <TextField label="Description" fullWidth required multiline rows={4} value={form.description}
-                        onChange={(e) => setForm({ ...form, description: e.target.value })} />
-                    <TextField select label="Type" fullWidth value={form.type}
-                        onChange={(e) => setForm({ ...form, type: e.target.value })}>
-                        <MenuItem value="standard">Standard</MenuItem>
-                        <MenuItem value="spa">Spa</MenuItem>
-                    </TextField>
-                    <TextField select label="Category" fullWidth required value={form.categoryId}
-                        onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
-                        {categories.map((c) => <MenuItem key={c._id} value={c._id}>{c.name}</MenuItem>)}
-                    </TextField>
+                <DialogContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+                        <Box>
+                            <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Job Title</Typography>
+                            <TextField fullWidth required value={form.title}
+                                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                placeholder="e.g. Senior Hairdresser" />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Description</Typography>
+                            <TextField fullWidth required multiline rows={4} value={form.description}
+                                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                placeholder="Describe the job role and requirements..." />
+                        </Box>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                            <Box>
+                                <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Type</Typography>
+                                <TextField select fullWidth value={form.type}
+                                    onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                                    <MenuItem value="standard">Salon</MenuItem>
+                                    <MenuItem value="spa">Spa</MenuItem>
+                                </TextField>
+                            </Box>
+                            <Box>
+                                <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Category</Typography>
+                                <TextField select fullWidth required value={form.categoryId}
+                                    onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
+                                    {categories.map((c) => (
+                                        <MenuItem key={c._id} value={c._id}>{c.name}</MenuItem>
+                                    ))}
+                                </TextField>
+                            </Box>
+                        </Box>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDialog(null)}>Cancel</Button>
+                    <Button onClick={() => setDialog(null)} variant="outlined" color="inherit"
+                        sx={{ color: '#374151', borderColor: '#e5e7eb' }}>
+                        Cancel
+                    </Button>
                     <Button variant="contained" onClick={() => saveMutation.mutate(form)}
-                        disabled={saveMutation.isPending}>Save</Button>
+                        disabled={saveMutation.isPending}>
+                        {saveMutation.isPending ? 'Saving...' : 'Save Job'}
+                    </Button>
                 </DialogActions>
             </Dialog>
 
-            <ConfirmDialog open={!!deleteTarget} title="Delete Job"
-                message={`Delete "${deleteTarget?.title}"?`}
+            <ConfirmDialog
+                open={!!deleteTarget}
+                title="Delete Job"
+                message={`Delete "${deleteTarget?.title}"? This cannot be undone.`}
                 onConfirm={() => deleteMutation.mutate(deleteTarget._id)}
-                onClose={() => setDeleteTarget(null)} loading={deleteMutation.isPending} />
+                onClose={() => setDeleteTarget(null)}
+                loading={deleteMutation.isPending}
+            />
         </Box>
     );
 }

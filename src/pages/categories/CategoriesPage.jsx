@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
-    DialogActions, TextField, Switch, FormControlLabel, Chip, IconButton, Tooltip,
+    DialogActions, TextField, Switch, IconButton, Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,7 +17,7 @@ const EMPTY = { name: '', type: '' };
 export default function CategoriesPage() {
     const qc = useQueryClient();
     const [page, setPage] = useState(0);
-    const [dialog, setDialog] = useState(null); // null | { mode: 'create'|'edit', data }
+    const [dialog, setDialog] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [form, setForm] = useState(EMPTY);
 
@@ -33,7 +33,7 @@ export default function CategoriesPage() {
 
     const saveMutation = useMutation({
         mutationFn: (d) => dialog?.data?._id ? updateCategory(dialog.data._id, d) : createCategory(d),
-        onSuccess: () => { toast.success('Saved'); setDialog(null); invalidate(); },
+        onSuccess: () => { toast.success('Category saved'); setDialog(null); invalidate(); },
         onError: (e) => toast.error(e.response?.data?.message || 'Error'),
     });
 
@@ -44,7 +44,7 @@ export default function CategoriesPage() {
 
     const deleteMutation = useMutation({
         mutationFn: deleteCategory,
-        onSuccess: () => { toast.success('Deleted'); setDeleteTarget(null); invalidate(); },
+        onSuccess: () => { toast.success('Category deleted'); setDeleteTarget(null); invalidate(); },
         onError: (e) => toast.error(e.response?.data?.message || 'Error'),
     });
 
@@ -52,25 +52,41 @@ export default function CategoriesPage() {
     const openEdit = (row) => { setForm({ name: row.name, type: row.type }); setDialog({ mode: 'edit', data: row }); };
 
     const columns = [
-        { key: 'name', label: 'Name' },
+        {
+            key: 'name', label: 'Name',
+            render: (row) => <Typography sx={{ fontSize: 13.5, fontWeight: 500 }}>{row.name}</Typography>,
+        },
         { key: 'type', label: 'Type' },
         {
-            key: 'status', label: 'Status',
+            key: 'status', label: 'Active',
             render: (row) => (
-                <Switch checked={row.status} size="small"
-                    onChange={() => toggleMutation.mutate(row._id)} />
+                <Switch
+                    checked={row.status}
+                    size="small"
+                    onChange={() => toggleMutation.mutate(row._id)}
+                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#16a34a' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#16a34a' } }}
+                />
             ),
         },
         {
             key: 'createdAt', label: 'Created',
-            render: (row) => new Date(row.createdAt).toLocaleDateString(),
+            render: (row) => new Date(row.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
         },
         {
             key: 'actions', label: '',
             render: (row) => (
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <Tooltip title="Edit"><IconButton size="small" onClick={() => openEdit(row)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Delete"><IconButton size="small" color="error" onClick={() => setDeleteTarget(row)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip title="Edit">
+                        <IconButton size="small" onClick={() => openEdit(row)}>
+                            <EditIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <IconButton size="small" onClick={() => setDeleteTarget(row)}
+                            sx={{ color: '#9ca3af', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
+                            <DeleteIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             ),
         },
@@ -78,34 +94,61 @@ export default function CategoriesPage() {
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h5" fontWeight={700}>Categories</Typography>
-                <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>Add Category</Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                <Box>
+                    <Typography variant="h5">Categories</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {total} total categories
+                    </Typography>
+                </Box>
+                <Button variant="contained" startIcon={<AddIcon sx={{ fontSize: 16 }} />} onClick={openCreate}>
+                    Add Category
+                </Button>
             </Box>
 
-            <DataTable columns={columns} rows={rows} total={total} page={page}
-                rowsPerPage={10} onPageChange={(_, p) => setPage(p)} loading={isLoading} />
+            <DataTable
+                columns={columns} rows={rows} total={total} page={page}
+                rowsPerPage={10} onPageChange={(_, p) => setPage(p)} loading={isLoading}
+            />
 
-            {/* Create / Edit Dialog */}
             <Dialog open={!!dialog} onClose={() => setDialog(null)} maxWidth="xs" fullWidth>
                 <DialogTitle>{dialog?.mode === 'edit' ? 'Edit Category' : 'New Category'}</DialogTitle>
-                <DialogContent sx={{ pt: 2 }}>
-                    <TextField label="Name" fullWidth required value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })} sx={{ mb: 2 }} />
-                    <TextField label="Type" fullWidth required value={form.type}
-                        onChange={(e) => setForm({ ...form, type: e.target.value })} />
+                <DialogContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+                        <Box>
+                            <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Name</Typography>
+                            <TextField fullWidth required value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                placeholder="e.g. Hairdresser" />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontSize: 12, fontWeight: 500, mb: 0.75, color: '#374151' }}>Type</Typography>
+                            <TextField fullWidth required value={form.type}
+                                onChange={(e) => setForm({ ...form, type: e.target.value })}
+                                placeholder="e.g. salon" />
+                        </Box>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDialog(null)}>Cancel</Button>
+                    <Button onClick={() => setDialog(null)} variant="outlined" color="inherit"
+                        sx={{ color: '#374151', borderColor: '#e5e7eb' }}>
+                        Cancel
+                    </Button>
                     <Button variant="contained" onClick={() => saveMutation.mutate(form)}
-                        disabled={saveMutation.isPending}>Save</Button>
+                        disabled={saveMutation.isPending}>
+                        {saveMutation.isPending ? 'Saving...' : 'Save'}
+                    </Button>
                 </DialogActions>
             </Dialog>
 
-            <ConfirmDialog open={!!deleteTarget} title="Delete Category"
+            <ConfirmDialog
+                open={!!deleteTarget}
+                title="Delete Category"
                 message={`Delete "${deleteTarget?.name}"? This cannot be undone.`}
                 onConfirm={() => deleteMutation.mutate(deleteTarget._id)}
-                onClose={() => setDeleteTarget(null)} loading={deleteMutation.isPending} />
+                onClose={() => setDeleteTarget(null)}
+                loading={deleteMutation.isPending}
+            />
         </Box>
     );
 }
