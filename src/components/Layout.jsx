@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
     Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText,
@@ -13,7 +12,7 @@ import ContactsIcon from '@mui/icons-material/Contacts';
 import LogoutIcon from '@mui/icons-material/Logout';
 import useAuthStore from '../store/authStore';
 
-const W = 232;
+const W = 236;
 
 const NAV = [
     { label: 'Dashboard', icon: DashboardIcon, path: '/' },
@@ -36,8 +35,10 @@ export default function Layout() {
         return location.pathname.startsWith(path);
     };
 
+    const currentPage = NAV.find(n => isActive(n.path))?.label || 'Dashboard';
+
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f9fafb' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
             <Drawer
                 variant="permanent"
                 sx={{
@@ -46,36 +47,36 @@ export default function Layout() {
                     '& .MuiDrawer-paper': {
                         width: W,
                         boxSizing: 'border-box',
-                        bgcolor: '#111827',
+                        bgcolor: '#0f172a',
                         border: 'none',
                         display: 'flex',
                         flexDirection: 'column',
                     },
                 }}
             >
-                {/* Logo */}
-                <Box sx={{ px: 3, pt: 3, pb: 2.5 }}>
+                {/* Brand */}
+                <Box sx={{ px: 2.5, pt: 2.5, pb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Box sx={{
-                            width: 32, height: 32, borderRadius: '8px',
-                            bgcolor: '#dc2626',
+                            width: 34, height: 34, borderRadius: '8px',
+                            bgcolor: '#2563eb',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             flexShrink: 0,
                         }}>
                             <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: 16, lineHeight: 1 }}>J</Typography>
                         </Box>
                         <Box>
-                            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
+                            <Typography sx={{ color: '#f1f5f9', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>
                                 Job Salon & Spa
                             </Typography>
-                            <Typography sx={{ color: '#6b7280', fontSize: 11, lineHeight: 1.4 }}>
+                            <Typography sx={{ color: '#64748b', fontSize: 11, lineHeight: 1.4 }}>
                                 Admin Portal
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
 
-                <Divider sx={{ borderColor: '#1f2937', mx: 2 }} />
+                <Divider sx={{ borderColor: '#1e293b' }} />
 
                 {/* Nav */}
                 <List sx={{ px: 1.5, pt: 1.5, flexGrow: 1 }}>
@@ -86,12 +87,13 @@ export default function Layout() {
                                 key={path}
                                 onClick={() => navigate(path)}
                                 sx={{
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     mb: 0.5,
                                     px: 1.5,
-                                    py: 1,
-                                    bgcolor: active ? '#1f2937' : 'transparent',
-                                    '&:hover': { bgcolor: active ? '#1f2937' : '#1a2332' },
+                                    py: 0.9,
+                                    bgcolor: active ? '#1e3a5f' : 'transparent',
+                                    '&:hover': { bgcolor: active ? '#1e3a5f' : '#1e293b' },
+                                    transition: 'background 0.12s',
                                     position: 'relative',
                                 }}
                             >
@@ -99,19 +101,19 @@ export default function Layout() {
                                     <Box sx={{
                                         position: 'absolute', left: 0, top: '50%',
                                         transform: 'translateY(-50%)',
-                                        width: 3, height: 18, borderRadius: '0 2px 2px 0',
-                                        bgcolor: '#dc2626',
+                                        width: 3, height: 20, borderRadius: '0 3px 3px 0',
+                                        bgcolor: '#2563eb',
                                     }} />
                                 )}
-                                <ListItemIcon sx={{ minWidth: 34, color: active ? '#fff' : '#9ca3af' }}>
-                                    <Icon sx={{ fontSize: 18 }} />
+                                <ListItemIcon sx={{ minWidth: 32, color: active ? '#60a5fa' : '#475569' }}>
+                                    <Icon sx={{ fontSize: 17 }} />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={label}
                                     primaryTypographyProps={{
                                         fontSize: 13.5,
                                         fontWeight: active ? 600 : 400,
-                                        color: active ? '#fff' : '#9ca3af',
+                                        color: active ? '#f1f5f9' : '#94a3b8',
                                     }}
                                 />
                             </ListItemButton>
@@ -120,39 +122,43 @@ export default function Layout() {
                 </List>
 
                 {/* User */}
-                <Divider sx={{ borderColor: '#1f2937', mx: 2 }} />
-                <Box sx={{ px: 2, py: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#374151', fontSize: 13, fontWeight: 700 }}>
+                <Divider sx={{ borderColor: '#1e293b' }} />
+                <Box sx={{ px: 2, py: 1.75, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Avatar sx={{ width: 30, height: 30, bgcolor: '#1e3a5f', fontSize: 12, fontWeight: 700, color: '#60a5fa' }}>
                         {admin?.name?.[0]?.toUpperCase() || 'A'}
                     </Avatar>
                     <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                        <Typography sx={{ color: '#e5e7eb', fontSize: 13, fontWeight: 600, lineHeight: 1.3 }} noWrap>
+                        <Typography sx={{ color: '#f1f5f9', fontSize: 13, fontWeight: 600, lineHeight: 1.3 }} noWrap>
                             {admin?.name || 'Admin'}
                         </Typography>
-                        <Typography sx={{ color: '#6b7280', fontSize: 11, lineHeight: 1.4 }} noWrap>
+                        <Typography sx={{ color: '#64748b', fontSize: 11, lineHeight: 1.4 }} noWrap>
                             {admin?.role || 'Administrator'}
                         </Typography>
                     </Box>
                     <Tooltip title="Sign out">
-                        <IconButton size="small" onClick={handleLogout} sx={{ color: '#6b7280', '&:hover': { color: '#e5e7eb', bgcolor: '#1f2937' } }}>
-                            <LogoutIcon sx={{ fontSize: 16 }} />
+                        <IconButton size="small" onClick={handleLogout}
+                            sx={{ color: '#475569', '&:hover': { color: '#f1f5f9', bgcolor: '#1e293b' } }}>
+                            <LogoutIcon sx={{ fontSize: 15 }} />
                         </IconButton>
                     </Tooltip>
                 </Box>
             </Drawer>
 
-            {/* Main */}
+            {/* Main content */}
             <Box component="main" sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-                {/* Top bar */}
+                {/* Topbar */}
                 <Box sx={{
                     height: 56, px: 3,
-                    display: 'flex', alignItems: 'center',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     bgcolor: '#fff',
-                    borderBottom: '1px solid #e5e7eb',
+                    borderBottom: '1px solid #e2e8f0',
                     position: 'sticky', top: 0, zIndex: 10,
                 }}>
-                    <Typography sx={{ fontSize: 13, color: '#9ca3af' }}>
-                        {NAV.find(n => isActive(n.path))?.label || 'Dashboard'}
+                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>
+                        {currentPage}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, color: '#94a3b8' }}>
+                        {admin?.email || ''}
                     </Typography>
                 </Box>
 

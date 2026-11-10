@@ -4,9 +4,17 @@
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
 }
 
-body { margin: 0; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9;
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 1.5;
+}
 
 #root {
   width: 100%;
@@ -15,4 +23,45 @@ body { margin: 0; }
   text-align: left;
   border: none;
   min-height: 100vh;
+  background-color: #f4f6f9;
+  color: #0f172a;
+}
+
+/* Force all MUI text to be visible */
+.MuiTypography-root {
+  color: inherit;
+}
+
+/* Ensure table cells are always readable */
+.MuiTableCell-root {
+  color: #0f172a !important;
+}
+
+.MuiTableCell-head {
+  color: #64748b !important;
+}
+
+/* Input text always visible */
+.MuiInputBase-input {
+  color: #0f172a !important;
+}
+
+.MuiInputBase-input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+/* Select text */
+.MuiSelect-select {
+  color: #0f172a !important;
+}
+
+/* MenuItem text */
+.MuiMenuItem-root {
+  color: #0f172a !important;
+}
+
+/* List item text */
+.MuiListItemText-primary {
+  color: inherit;
 }

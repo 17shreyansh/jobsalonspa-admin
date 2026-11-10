@@ -14,9 +14,9 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import { getApplications, updateApplicationStatus, deleteApplication } from '../../api/services';
 
 const STATUS_CHIP = {
-    approved: { label: 'Approved', sx: { bgcolor: '#dcfce7', color: '#16a34a' } },
-    rejected: { label: 'Rejected', sx: { bgcolor: '#fee2e2', color: '#dc2626' } },
-    pending: { label: 'Pending', sx: { bgcolor: '#f3f4f6', color: '#6b7280' } },
+    approved: { label: 'Approved', sx: { bgcolor: '#dcfce7', color: '#15803d' } },
+    rejected: { label: 'Rejected', sx: { bgcolor: '#fee2e2', color: '#b91c1c' } },
+    pending:  { label: 'Pending',  sx: { bgcolor: '#fef9c3', color: '#a16207' } },
 };
 
 export default function ApplicationsPage({ type }) {
@@ -75,7 +75,7 @@ export default function ApplicationsPage({ type }) {
             </Tooltip>
             <Tooltip title="Delete">
                 <IconButton size="small" onClick={() => setDeleteTarget(row)}
-                    sx={{ color: '#9ca3af', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
+                    sx={{ color: '#64748b', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
                     <DeleteIcon sx={{ fontSize: 15 }} />
                 </IconButton>
             </Tooltip>

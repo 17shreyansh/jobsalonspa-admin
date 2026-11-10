@@ -30,101 +30,121 @@ export default function LoginPage() {
 
     return (
         <Box sx={{ minHeight: '100vh', display: 'flex' }}>
-            {/* Left panel */}
+            {/* Left panel — dark brand */}
             <Box sx={{
                 width: 420, flexShrink: 0,
-                bgcolor: '#111827',
+                bgcolor: '#0f172a',
                 display: { xs: 'none', md: 'flex' },
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 p: 5,
+                borderRight: '1px solid #1e293b',
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <Box sx={{
-                        width: 36, height: 36, borderRadius: '10px',
-                        bgcolor: '#dc2626',
+                        width: 36, height: 36, borderRadius: '8px',
+                        bgcolor: '#2563eb',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                         <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: 18 }}>J</Typography>
                     </Box>
-                    <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>
+                    <Typography sx={{ color: '#f1f5f9', fontWeight: 700, fontSize: 15 }}>
                         Job Salon & Spa
                     </Typography>
                 </Box>
 
                 <Box>
-                    <Typography sx={{ color: '#fff', fontSize: 28, fontWeight: 700, lineHeight: 1.3, mb: 2 }}>
-                        Manage your salon recruitment platform
+                    <Typography sx={{ color: '#f1f5f9', fontSize: 24, fontWeight: 700, lineHeight: 1.4, mb: 2 }}>
+                        Recruitment Management Platform
                     </Typography>
-                    <Typography sx={{ color: '#6b7280', fontSize: 14, lineHeight: 1.7 }}>
-                        Review applications, post jobs, manage categories, and track your network — all in one place.
+                    <Typography sx={{ color: '#64748b', fontSize: 14, lineHeight: 1.8 }}>
+                        Review applications, manage job listings, handle categories, and monitor your network from a single dashboard.
                     </Typography>
+
+                    <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        {['Manage candidate & salon applications', 'Post and control job listings', 'Track platform activity in real time'].map((t) => (
+                            <Box key={t} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#2563eb', flexShrink: 0 }} />
+                                <Typography sx={{ color: '#94a3b8', fontSize: 13.5 }}>{t}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
                 </Box>
 
-                <Typography sx={{ color: '#374151', fontSize: 12 }}>
-                    © {new Date().getFullYear()} Job Salon & Spa
+                <Typography sx={{ color: '#334155', fontSize: 12 }}>
+                    © {new Date().getFullYear()} Job Salon & Spa. All rights reserved.
                 </Typography>
             </Box>
 
-            {/* Right panel */}
+            {/* Right panel — login form */}
             <Box sx={{
                 flexGrow: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                bgcolor: '#f9fafb', p: 3,
+                bgcolor: '#f4f6f9', p: 3,
             }}>
                 <Box sx={{ width: '100%', maxWidth: 380 }}>
-                    <Box sx={{ mb: 4 }}>
-                        <Typography variant="h5" sx={{ mb: 0.5 }}>Sign in</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Enter your credentials to access the admin panel
+                    <Box sx={{ mb: 3.5 }}>
+                        <Typography sx={{ fontSize: 22, fontWeight: 700, color: '#0f172a', mb: 0.5 }}>
+                            Sign in
+                        </Typography>
+                        <Typography sx={{ fontSize: 14, color: '#64748b' }}>
+                            Enter your admin credentials to continue
                         </Typography>
                     </Box>
 
-                    <form onSubmit={handleSubmit}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Box>
-                                <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.75, color: '#374151' }}>
-                                    Email address
-                                </Typography>
-                                <TextField
-                                    type="email" fullWidth required
-                                    placeholder="admin@example.com"
-                                    value={form.email}
-                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                />
-                            </Box>
+                    <Box sx={{
+                        bgcolor: '#fff',
+                        borderRadius: '10px',
+                        p: 3,
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    }}>
+                        <form onSubmit={handleSubmit}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                                <Box>
+                                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75, color: '#374151' }}>
+                                        Email address
+                                    </Typography>
+                                    <TextField
+                                        type="email" fullWidth required
+                                        placeholder="admin@example.com"
+                                        value={form.email}
+                                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                    />
+                                </Box>
 
-                            <Box>
-                                <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.75, color: '#374151' }}>
-                                    Password
-                                </Typography>
-                                <TextField
-                                    type={showPw ? 'text' : 'password'}
-                                    fullWidth required
-                                    placeholder="Enter your password"
-                                    value={form.password}
-                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton size="small" onClick={() => setShowPw(!showPw)} edge="end">
-                                                    {showPw ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            </Box>
+                                <Box>
+                                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75, color: '#374151' }}>
+                                        Password
+                                    </Typography>
+                                    <TextField
+                                        type={showPw ? 'text' : 'password'}
+                                        fullWidth required
+                                        placeholder="Enter your password"
+                                        value={form.password}
+                                        onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton size="small" onClick={() => setShowPw(!showPw)} edge="end">
+                                                        {showPw ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Box>
 
-                            <Button
-                                type="submit" variant="contained" fullWidth size="large"
-                                disabled={loading}
-                                sx={{ mt: 1, py: 1.25, fontSize: 14 }}
-                            >
-                                {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign in'}
-                            </Button>
-                        </Box>
-                    </form>
+                                <Button
+                                    type="submit" variant="contained" fullWidth size="large"
+                                    disabled={loading}
+                                    sx={{ mt: 0.5, py: 1.25, fontSize: 14 }}
+                                >
+                                    {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign in'}
+                                </Button>
+                            </Box>
+                        </form>
+                    </Box>
                 </Box>
             </Box>
         </Box>

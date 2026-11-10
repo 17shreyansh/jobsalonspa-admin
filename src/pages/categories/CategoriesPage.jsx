@@ -64,7 +64,7 @@ export default function CategoriesPage() {
                     checked={row.status}
                     size="small"
                     onChange={() => toggleMutation.mutate(row._id)}
-                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#16a34a' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#16a34a' } }}
+                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#2563eb' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#2563eb' } }}
                 />
             ),
         },
@@ -83,7 +83,7 @@ export default function CategoriesPage() {
                     </Tooltip>
                     <Tooltip title="Delete">
                         <IconButton size="small" onClick={() => setDeleteTarget(row)}
-                            sx={{ color: '#9ca3af', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
+                            sx={{ color: '#64748b', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
                             <DeleteIcon sx={{ fontSize: 15 }} />
                         </IconButton>
                     </Tooltip>

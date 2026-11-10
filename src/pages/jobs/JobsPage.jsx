@@ -15,8 +15,8 @@ import { getJobs, createJob, updateJob, toggleJobStatus, deleteJob, getActiveCat
 const EMPTY = { title: '', description: '', type: 'standard', categoryId: '' };
 
 const TYPE_CHIP = {
-    standard: { label: 'Salon', sx: { bgcolor: '#fef3c7', color: '#d97706' } },
-    spa: { label: 'Spa', sx: { bgcolor: '#ede9fe', color: '#7c3aed' } },
+    standard: { label: 'Salon', sx: { bgcolor: '#f0fdf4', color: '#15803d' } },
+    spa:      { label: 'Spa',   sx: { bgcolor: '#eff6ff', color: '#1d4ed8' } },
 };
 
 export default function JobsPage() {
@@ -80,7 +80,7 @@ export default function JobsPage() {
                     checked={row.status}
                     size="small"
                     onChange={() => toggleMutation.mutate(row._id)}
-                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#16a34a' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#16a34a' } }}
+                    sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#2563eb' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#2563eb' } }}
                 />
             ),
         },
@@ -99,7 +99,7 @@ export default function JobsPage() {
                     </Tooltip>
                     <Tooltip title="Delete">
                         <IconButton size="small" onClick={() => setDeleteTarget(row)}
-                            sx={{ color: '#9ca3af', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
+                            sx={{ color: '#64748b', '&:hover': { color: '#dc2626', bgcolor: '#fee2e2' } }}>
                             <DeleteIcon sx={{ fontSize: 15 }} />
                         </IconButton>
                     </Tooltip>

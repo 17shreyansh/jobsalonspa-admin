@@ -11,9 +11,10 @@ export default function DataTable({
         <Paper
             elevation={0}
             sx={{
-                border: '1px solid #e5e7eb',
-                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
                 overflow: 'hidden',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
             }}
         >
             <TableContainer>
@@ -31,13 +32,13 @@ export default function DataTable({
                         {loading ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length} align="center" sx={{ py: 6, border: 0 }}>
-                                    <CircularProgress size={24} sx={{ color: '#9ca3af' }} />
+                                    <CircularProgress size={22} sx={{ color: '#2563eb' }} />
                                 </TableCell>
                             </TableRow>
                         ) : rows.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length} align="center" sx={{ py: 6, border: 0 }}>
-                                    <Typography sx={{ color: '#9ca3af', fontSize: 14 }}>{emptyText}</Typography>
+                                    <Typography sx={{ color: '#94a3b8', fontSize: 14 }}>{emptyText}</Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -45,13 +46,13 @@ export default function DataTable({
                                 <TableRow
                                     key={row._id || i}
                                     sx={{
-                                        '&:hover': { bgcolor: '#f9fafb' },
-                                        '& td': { borderColor: '#f3f4f6' },
+                                        '&:hover': { bgcolor: '#f8fafc' },
+                                        '& td': { borderColor: '#f1f5f9' },
                                     }}
                                 >
                                     {columns.map((col) => (
-                                        <TableCell key={col.key} sx={{ fontSize: 13.5, color: '#374151' }}>
-                                            {col.render ? col.render(row) : (row[col.key] ?? <span style={{ color: '#d1d5db' }}>—</span>)}
+                                        <TableCell key={col.key}>
+                                            {col.render ? col.render(row) : (row[col.key] ?? <span style={{ color: '#cbd5e1' }}>—</span>)}
                                         </TableCell>
                                     ))}
                                 </TableRow>
@@ -60,7 +61,7 @@ export default function DataTable({
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box sx={{ borderTop: '1px solid #f3f4f6' }}>
+            <Box sx={{ borderTop: '1px solid #f1f5f9' }}>
                 <TablePagination
                     component="div"
                     count={total}
@@ -68,7 +69,7 @@ export default function DataTable({
                     rowsPerPage={rowsPerPage}
                     onPageChange={onPageChange}
                     rowsPerPageOptions={[]}
-                    sx={{ '& .MuiTablePagination-toolbar': { minHeight: 48 }, '& p': { fontSize: 13 } }}
+                    sx={{ '& .MuiTablePagination-toolbar': { minHeight: 46 }, '& p': { fontSize: 13, color: '#475569' } }}
                 />
             </Box>
         </Paper>
