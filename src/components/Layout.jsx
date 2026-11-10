@@ -105,7 +105,7 @@ export default function Layout() {
                                         bgcolor: '#2563eb',
                                     }} />
                                 )}
-                                <ListItemIcon sx={{ minWidth: 32, color: active ? '#60a5fa' : '#475569' }}>
+                                <ListItemIcon sx={{ minWidth: 32, color: active ? '#60a5fa' : '#94a3b8' }}>
                                     <Icon sx={{ fontSize: 17 }} />
                                 </ListItemIcon>
                                 <ListItemText
@@ -113,7 +113,7 @@ export default function Layout() {
                                     primaryTypographyProps={{
                                         fontSize: 13.5,
                                         fontWeight: active ? 600 : 400,
-                                        color: active ? '#f1f5f9' : '#94a3b8',
+                                        color: active ? '#60a5fa' : '#fff',
                                     }}
                                 />
                             </ListItemButton>
