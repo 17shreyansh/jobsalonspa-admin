@@ -110,10 +110,12 @@ export default function Layout() {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={label}
-                                    primaryTypographyProps={{
-                                        fontSize: 13.5,
-                                        fontWeight: active ? 600 : 400,
-                                        color: active ? '#60a5fa' : '#fff',
+                                    sx={{
+                                        '& .MuiListItemText-primary': {
+                                            fontSize: 13.5,
+                                            fontWeight: active ? 600 : 400,
+                                            color: active ? '#60a5fa' : '#fff',
+                                        }
                                     }}
                                 />
                             </ListItemButton>

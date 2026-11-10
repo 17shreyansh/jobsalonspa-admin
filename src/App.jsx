@@ -1,17 +1,25 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import { createTheme, ThemeProvider, CssBaseline, CircularProgress, Box } from '@mui/material';
+import { lazy, Suspense } from 'react';
 import useAuthStore from './store/authStore';
 import Layout from './components/Layout';
-import LoginPage from './pages/auth/LoginPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
-import CategoriesPage from './pages/categories/CategoriesPage';
-import JobsPage from './pages/jobs/JobsPage';
-import ApplicationsPage from './pages/applications/ApplicationsPage';
-import ApplicationDetailPage from './pages/applications/ApplicationDetailPage';
-import ContactsPage from './pages/contacts/ContactsPage';
-import ContactListPage from './pages/contacts/ContactListPage';
+
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
+const CategoriesPage = lazy(() => import('./pages/categories/CategoriesPage'));
+const JobsPage = lazy(() => import('./pages/jobs/JobsPage'));
+const ApplicationsPage = lazy(() => import('./pages/applications/ApplicationsPage'));
+const ApplicationDetailPage = lazy(() => import('./pages/applications/ApplicationDetailPage'));
+const ContactsPage = lazy(() => import('./pages/contacts/ContactsPage'));
+const ContactListPage = lazy(() => import('./pages/contacts/ContactListPage'));
+
+const PageLoader = () => (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <CircularProgress size={26} sx={{ color: '#2563eb' }} />
+    </Box>
+);
 
 const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
@@ -215,6 +223,7 @@ export default function App() {
                     }}
                 />
                 <BrowserRouter>
+                    <Suspense fallback={<PageLoader />}>
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/" element={<Guard><Layout /></Guard>}>
@@ -229,6 +238,7 @@ export default function App() {
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
+                    </Suspense>
                 </BrowserRouter>
             </ThemeProvider>
         </QueryClientProvider>
