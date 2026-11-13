@@ -17,7 +17,7 @@ export default function ContactsPage() {
     const [search, setSearch] = useState('');
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    const { data: statsData } = useQuery({ queryKey: ['contact-stats'], queryFn: getContactStats });
+    const { data: statsData, isError: statsError } = useQuery({ queryKey: ['contact-stats'], queryFn: getContactStats });
     const { data, isLoading } = useQuery({
         queryKey: ['contacts-owners', page, search],
         queryFn: () => getContactOwners({ page: page + 1, limit: 10, search: search || undefined }),
@@ -25,7 +25,7 @@ export default function ContactsPage() {
 
     const rows = data?.data?.data?.owners || [];
     const total = data?.data?.data?.total || 0;
-    const stats = statsData?.data?.data || {};
+    const stats = (!statsError && statsData?.data?.data) || {};
 
     const deleteMutation = useMutation({
         mutationFn: deleteContactOwner,
@@ -47,6 +47,14 @@ export default function ContactsPage() {
             render: (r) => (
                 <Typography sx={{ fontSize: 12, fontFamily: 'monospace', color: '#6b7280', maxWidth: 200 }} noWrap>
                     {r.deviceId}
+                </Typography>
+            ),
+        },
+        {
+            key: 'contactCount', label: 'Contacts',
+            render: (r) => (
+                <Typography sx={{ fontSize: 13.5, fontWeight: 600, color: '#2563eb' }}>
+                    {r.contactCount ?? 0}
                 </Typography>
             ),
         },

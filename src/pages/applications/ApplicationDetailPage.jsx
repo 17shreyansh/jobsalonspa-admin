@@ -136,7 +136,7 @@ export default function ApplicationDetailPage() {
                                         Profile Photo
                                     </Typography>
                                     <img
-                                        src={`${import.meta.env.VITE_API_URL.replace('/api/v1', '')}/uploads/photos/${app.photoPath}`}
+                                        src={`${import.meta.env.VITE_API_BASE_URL}/uploads/photos/${app.photoPath}`}
                                         alt="Candidate"
                                         style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, display: 'block', border: '1px solid #e2e8f0' }}
                                     />

@@ -51,12 +51,18 @@ function StatCard({ title, value, sub, icon: Icon, iconColor, iconBg }) {
 }
 
 export default function DashboardPage() {
-    const { data, isLoading } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboardStats });
+    const { data, isLoading, isError } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboardStats });
     const s = data?.data?.data;
 
     if (isLoading) return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
             <CircularProgress size={26} sx={{ color: '#2563eb' }} />
+        </Box>
+    );
+
+    if (isError) return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+            <Typography sx={{ color: '#94a3b8', fontSize: 14 }}>Failed to load dashboard. Please refresh.</Typography>
         </Box>
     );
 

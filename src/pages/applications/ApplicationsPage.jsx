@@ -24,11 +24,12 @@ export default function ApplicationsPage({ type }) {
     const qc = useQueryClient();
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const { data, isLoading } = useQuery({
-        queryKey: ['applications', type, page, search],
-        queryFn: () => getApplications({ type, page: page + 1, limit: 20, search: search || undefined }),
+        queryKey: ['applications', type, page, search, statusFilter],
+        queryFn: () => getApplications({ type, page: page + 1, limit: 20, search: search || undefined, status: statusFilter || undefined }),
     });
 
     const rows = data?.data?.data?.applications || [];
@@ -114,19 +115,33 @@ export default function ApplicationsPage({ type }) {
                         {total} total {type === 'candidate' ? 'candidates' : 'salons'}
                     </Typography>
                 </Box>
-                <TextField
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ width: 240 }}
-                />
+                <Box sx={{ display: 'flex', gap: 1.5 }}>
+                    <TextField
+                        select
+                        value={statusFilter}
+                        onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}
+                        sx={{ width: 130 }}
+                        SelectProps={{ displayEmpty: true }}
+                    >
+                        <MenuItem value="">All Status</MenuItem>
+                        <MenuItem value="pending">Pending</MenuItem>
+                        <MenuItem value="approved">Approved</MenuItem>
+                        <MenuItem value="rejected">Rejected</MenuItem>
+                    </TextField>
+                    <TextField
+                        placeholder="Search..."
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ width: 240 }}
+                    />
+                </Box>
             </Box>
 
             <DataTable
