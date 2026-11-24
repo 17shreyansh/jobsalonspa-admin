@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, TextField, InputAdornment, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton, Tooltip, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import DataTable from '../../components/DataTable';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import { getContactOwners, deleteContactOwner, getContactStats } from '../../api/services';
+import { getContactOwners, deleteContactOwner, getContactStats, exportContacts } from '../../api/services';
 
 export default function ContactsPage({
     appSource = 'jobsalon',
@@ -21,6 +22,26 @@ export default function ContactsPage({
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [exporting, setExporting] = useState(false);
+
+    const handleExport = async () => {
+        try {
+            setExporting(true);
+            const res = await exportContacts({ appSource });
+            const url = URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${appSource === 'pinkcastle' ? 'pinkcastle' : 'jobsalon'}-contacts.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch {
+            toast.error('Export failed');
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const { data: statsData, isError: statsError } = useQuery({
         queryKey: ['contact-stats', appSource],
@@ -99,19 +120,31 @@ export default function ContactsPage({
                         {subtitle}
                     </Typography>
                 </Box>
-                <TextField
-                    placeholder="Search by name..."
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ width: 240 }}
-                />
+                <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                    <TextField
+                        placeholder="Search by name..."
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ width: 240 }}
+                    />
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<FileDownloadIcon sx={{ fontSize: 16 }} />}
+                        onClick={handleExport}
+                        disabled={exporting || !total}
+                        sx={{ whiteSpace: 'nowrap', height: 40 }}
+                    >
+                        {exporting ? 'Exporting…' : 'Export CSV'}
+                    </Button>
+                </Box>
             </Box>
 
             {/* Stat pills */}

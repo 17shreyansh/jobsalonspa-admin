@@ -4,11 +4,12 @@ import { Box, Typography, Button, IconButton, Tooltip, TextField, InputAdornment
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import DataTable from '../../components/DataTable';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import { getOwnerContacts, deleteContact, getContactOwner } from '../../api/services';
+import { getOwnerContacts, deleteContact, getContactOwner, exportContacts } from '../../api/services';
 
 export default function ContactListPage({ backPath = '/contacts' }) {
     const { ownerId } = useParams();
@@ -17,6 +18,26 @@ export default function ContactListPage({ backPath = '/contacts' }) {
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [exporting, setExporting] = useState(false);
+
+    const handleExport = async () => {
+        try {
+            setExporting(true);
+            const res = await exportContacts({ ownerId });
+            const url = URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'contacts.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch {
+            toast.error('Export failed');
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const { data: ownerData } = useQuery({
         queryKey: ['contact-owner', ownerId],
@@ -117,19 +138,31 @@ export default function ContactListPage({ backPath = '/contacts' }) {
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                 <Typography variant="h5">Contact List</Typography>
-                <TextField
-                    placeholder="Search contacts..."
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ width: 240 }}
-                />
+                <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                    <TextField
+                        placeholder="Search contacts..."
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ width: 240 }}
+                    />
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<FileDownloadIcon sx={{ fontSize: 16 }} />}
+                        onClick={handleExport}
+                        disabled={exporting || !total}
+                        sx={{ whiteSpace: 'nowrap', height: 40 }}
+                    >
+                        {exporting ? 'Exporting…' : 'Export CSV'}
+                    </Button>
+                </Box>
             </Box>
 
             <DataTable

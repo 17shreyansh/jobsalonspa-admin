@@ -39,3 +39,4 @@ export const getOwnerContacts = (ownerId, params) =>
     api.get(`/contacts/owners/${ownerId}/contacts`, { params });
 export const deleteContactOwner = (id) => api.delete(`/contacts/owners/${id}`);
 export const deleteContact = (id) => api.delete(`/contacts/${id}`);
+export const exportContacts = (params) => api.get('/contacts/export', { params, responseType: 'blob' });
