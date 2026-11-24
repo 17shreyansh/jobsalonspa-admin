@@ -32,7 +32,7 @@ export const updateApplicationStatus = (id, status) =>
 export const deleteApplication = (id) => api.delete(`/applications/${id}`);
 
 // Contacts
-export const getContactStats = () => api.get('/contacts/stats');
+export const getContactStats = (params) => api.get('/contacts/stats', { params });
 export const getContactOwners = (params) => api.get('/contacts/owners', { params });
 export const getContactOwner = (ownerId) => api.get(`/contacts/owners/${ownerId}`);
 export const getOwnerContacts = (ownerId, params) =>

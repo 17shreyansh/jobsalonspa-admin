@@ -235,6 +235,8 @@ export default function App() {
                             <Route path="applications/:id" element={<ApplicationDetailPage />} />
                             <Route path="contacts" element={<ContactsPage />} />
                             <Route path="contacts/:ownerId" element={<ContactListPage />} />
+                            <Route path="pinkcastle-contacts" element={<ContactsPage appSource="pinkcastle" title="Pink Castle Contacts" subtitle="Device contact uploads from the Pink Castle app" basePath="/pinkcastle-contacts" />} />
+                            <Route path="pinkcastle-contacts/:ownerId" element={<ContactListPage backPath="/pinkcastle-contacts" />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

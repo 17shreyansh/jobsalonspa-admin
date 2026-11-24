@@ -21,6 +21,7 @@ const NAV = [
     { label: 'Candidates', icon: PeopleIcon, path: '/applications/candidate' },
     { label: 'Salons', icon: StoreIcon, path: '/applications/salon' },
     { label: 'Contacts', icon: ContactsIcon, path: '/contacts' },
+    { label: 'Pink Castle Contacts', icon: ContactsIcon, path: '/pinkcastle-contacts' },
 ];
 
 export default function Layout() {

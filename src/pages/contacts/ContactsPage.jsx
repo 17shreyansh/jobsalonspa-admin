@@ -10,17 +10,25 @@ import DataTable from '../../components/DataTable';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { getContactOwners, deleteContactOwner, getContactStats } from '../../api/services';
 
-export default function ContactsPage() {
+export default function ContactsPage({
+    appSource = 'jobsalon',
+    title = 'Contacts',
+    subtitle = 'Device contact uploads from the mobile app',
+    basePath = '/contacts',
+}) {
     const navigate = useNavigate();
     const qc = useQueryClient();
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    const { data: statsData, isError: statsError } = useQuery({ queryKey: ['contact-stats'], queryFn: getContactStats });
+    const { data: statsData, isError: statsError } = useQuery({
+        queryKey: ['contact-stats', appSource],
+        queryFn: () => getContactStats({ appSource }),
+    });
     const { data, isLoading } = useQuery({
-        queryKey: ['contacts-owners', page, search],
-        queryFn: () => getContactOwners({ page: page + 1, limit: 10, search: search || undefined }),
+        queryKey: ['contacts-owners', appSource, page, search],
+        queryFn: () => getContactOwners({ page: page + 1, limit: 10, search: search || undefined, appSource }),
     });
 
     const rows = data?.data?.data?.owners || [];
@@ -67,7 +75,7 @@ export default function ContactsPage() {
             render: (r) => (
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <Tooltip title="View contacts">
-                        <IconButton size="small" onClick={() => navigate(`/contacts/${r._id}`)}>
+                        <IconButton size="small" onClick={() => navigate(`${basePath}/${r._id}`)}>
                             <OpenInNewIcon sx={{ fontSize: 15 }} />
                         </IconButton>
                     </Tooltip>
@@ -86,9 +94,9 @@ export default function ContactsPage() {
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                 <Box>
-                    <Typography variant="h5">Contacts</Typography>
+                    <Typography variant="h5">{title}</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        Device contact uploads from the mobile app
+                        {subtitle}
                     </Typography>
                 </Box>
                 <TextField

@@ -10,7 +10,7 @@ import DataTable from '../../components/DataTable';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { getOwnerContacts, deleteContact, getContactOwner } from '../../api/services';
 
-export default function ContactListPage() {
+export default function ContactListPage({ backPath = '/contacts' }) {
     const { ownerId } = useParams();
     const navigate = useNavigate();
     const qc = useQueryClient();
@@ -69,7 +69,7 @@ export default function ContactListPage() {
         <Box>
             <Button
                 startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
-                onClick={() => navigate('/contacts')}
+                onClick={() => navigate(backPath)}
                 sx={{ mb: 2.5, color: '#6b7280', fontWeight: 500, fontSize: 13, '&:hover': { bgcolor: '#f3f4f6' } }}
             >
                 Back to Contacts
